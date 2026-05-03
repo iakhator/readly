@@ -25,6 +25,8 @@ export interface ReaderState {
   totalWords: number;
   wordsPerMinute: number;
   estimatedTimeRemaining: number;
+  title?: string;
+  siteName?: string;
   tabId?: number;
 }
 

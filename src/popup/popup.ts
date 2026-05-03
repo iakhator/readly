@@ -59,9 +59,13 @@ async function init(): Promise<void> {
 // ── State ─────────────────────────────────────────────────────────────────────
 
 async function loadState(): Promise<void> {
-  const response = await sendToBackground({ type: 'CMD_GET_STATE' });
-  if (response && 'payload' in response) {
-    renderState((response as { payload: ReaderState | null }).payload);
+  try {
+    const response = await sendToBackground({ type: 'CMD_GET_STATE' });
+    if (response && 'payload' in response) {
+      renderState((response as { payload: ReaderState | null }).payload);
+    }
+  } catch {
+    renderState(null);
   }
 }
 
@@ -81,6 +85,8 @@ function renderState(state: ReaderState | null): void {
     $progressFill.style.width = `${state.progress}%`;
     $progressPct.textContent = `${state.progress}%`;
     $wordsRead.textContent = `${state.currentWordIndex} / ${state.totalWords} words`;
+    $articleTitle.textContent = state.title ?? '';
+    $articleSite.textContent = state.siteName ?? '';
     $emptyState.hidden = true;
     $articleDetails.hidden = false;
 

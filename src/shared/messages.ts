@@ -22,10 +22,37 @@ export type Message =
   | { type: 'SETTINGS_RESPONSE'; payload: ReaderSettings }
   | { type: 'STATE_RESPONSE'; payload: ReaderState | null };
 
-export function sendToBackground(message: Message): Promise<Message> {
-  return chrome.runtime.sendMessage(message) as Promise<Message>;
+/**
+ * Send a message from popup/content to the background service worker.
+ * Returns null when the SW isn't reachable (still waking up, etc.).
+ */
+export async function sendToBackground(message: Message): Promise<Message | null> {
+  try {
+    return (await chrome.runtime.sendMessage(message)) as Message;
+  } catch (err) {
+    if (!isConnectionError(err)) console.warn('[Readly] sendToBackground:', err);
+    return null;
+  }
 }
 
-export function sendToTab(tabId: number, message: Message): Promise<void> {
-  return chrome.tabs.sendMessage(tabId, message) as Promise<void>;
+/**
+ * Send a message from the background to a tab's content script.
+ * Silently no-ops when the tab has no content script running
+ * (chrome://, new tab, PDF, extension page, etc.).
+ */
+export async function sendToTab(tabId: number, message: Message): Promise<void> {
+  try {
+    await chrome.tabs.sendMessage(tabId, message);
+  } catch (err) {
+    if (!isConnectionError(err)) console.warn('[Readly] sendToTab:', err);
+  }
+}
+
+function isConnectionError(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err);
+  return (
+    msg.includes('Receiving end does not exist') ||
+    msg.includes('Could not establish connection') ||
+    msg.includes('The message port closed before a response was received')
+  );
 }

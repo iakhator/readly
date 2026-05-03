@@ -1,7 +1,7 @@
 import { getSettings, saveSettings, setTabState, clearTabState, tabStateKey } from '../shared/storage';
 import { summarize } from '../lib/summarizer';
 import { sendToTab } from '../shared/messages';
-import type { Message } from '../shared/types';
+import type { Message } from '../shared/messages';
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -18,22 +18,22 @@ chrome.runtime.onMessage.addListener(
 
       // ── Popup → Background → Content ──────────────────────────────────────
       case 'CMD_START':
-        void getActiveTabId().then((id) => id && sendToTab(id, { type: 'START_READING' }));
+        void getActiveTabId().then((id) => { if (id) void sendToTab(id, { type: 'START_READING' }); });
         sendResponse({ ok: true });
         break;
 
       case 'CMD_PAUSE':
-        void getActiveTabId().then((id) => id && sendToTab(id, { type: 'PAUSE_READING' }));
+        void getActiveTabId().then((id) => { if (id) void sendToTab(id, { type: 'PAUSE_READING' }); });
         sendResponse({ ok: true });
         break;
 
       case 'CMD_RESUME':
-        void getActiveTabId().then((id) => id && sendToTab(id, { type: 'RESUME_READING' }));
+        void getActiveTabId().then((id) => { if (id) void sendToTab(id, { type: 'RESUME_READING' }); });
         sendResponse({ ok: true });
         break;
 
       case 'CMD_STOP':
-        void getActiveTabId().then((id) => id && sendToTab(id, { type: 'STOP_READING' }));
+        void getActiveTabId().then((id) => { if (id) void sendToTab(id, { type: 'STOP_READING' }); });
         sendResponse({ ok: true });
         break;
 

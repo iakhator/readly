@@ -4,15 +4,23 @@ import { WordHighlighter } from './highlighter';
 import { ReaderOverlay } from './overlay';
 import { getSettings, saveSettings } from '../shared/storage';
 import { sendToBackground } from '../shared/messages';
-import type { Message, ReaderState } from '../shared/types';
+import type { ExtractedContent, ReaderState } from '../shared/types';
+import type { Message } from '../shared/messages';
 
 let reader: TTSReader | null = null;
 let highlighter: WordHighlighter | null = null;
 let overlay: ReaderOverlay | null = null;
+let currentContent: ExtractedContent | null = null;
 
 function onStateChange(state: ReaderState): void {
-  overlay?.update(state);
-  void sendToBackground({ type: 'READER_STATE_UPDATE', payload: state });
+  // Attach article metadata so the popup can display it
+  const enriched: ReaderState = {
+    ...state,
+    title: currentContent?.title,
+    siteName: currentContent?.siteName ?? undefined,
+  };
+  overlay?.update(enriched);
+  void sendToBackground({ type: 'READER_STATE_UPDATE', payload: enriched });
 
   if (state.status === 'done') {
     void handleReadingComplete();
@@ -24,8 +32,8 @@ function onWordChange(index: number): void {
 }
 
 async function startReading(): Promise<void> {
-  const content = extractContent();
-  if (!content) {
+  currentContent = extractContent();
+  if (!currentContent) {
     console.warn('[Readly] Could not extract readable content from this page.');
     return;
   }
@@ -54,11 +62,11 @@ async function startReading(): Promise<void> {
       document.querySelector<HTMLElement>('main') ??
       document.querySelector<HTMLElement>('[role="main"]');
     if (articleEl) {
-      highlighter.wrap(articleEl, content.textContent);
+      highlighter.wrap(articleEl);
     }
   }
 
-  reader.load(content.textContent);
+  reader.load(currentContent.textContent);
   reader.play();
 }
 
@@ -69,16 +77,15 @@ function stopReading(): void {
   reader = null;
   highlighter = null;
   overlay = null;
+  currentContent = null;
 }
 
 async function handleReadingComplete(): Promise<void> {
   const settings = await getSettings();
   if (!settings.autoSummarize || settings.aiProvider === 'none') return;
+  if (!currentContent) return;
 
-  const content = extractContent();
-  if (!content) return;
-
-  void sendToBackground({ type: 'SUMMARIZE', payload: { text: content.textContent } });
+  void sendToBackground({ type: 'SUMMARIZE', payload: { text: currentContent.textContent } });
 }
 
 chrome.runtime.onMessage.addListener(
