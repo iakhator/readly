@@ -19,6 +19,7 @@ export type Message =
   | { type: 'RESUME_READING' }
   | { type: 'STOP_READING' }
   | { type: 'SKIP_TO_SUMMARY' }
+  | { type: 'READ_SELECTION'; payload: { text: string } }
   | { type: 'SUMMARY_READY'; payload: Summary }
   // Background → Popup (responses)
   | { type: 'SETTINGS_RESPONSE'; payload: ReaderSettings }

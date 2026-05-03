@@ -112,6 +112,30 @@ chrome.tabs.onRemoved.addListener((tabId) => {
   void clearTabState(tabId);
 });
 
+// ── Context menu ──────────────────────────────────────────────────────────────
+
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: 'readly-read-selection',
+    title: chrome.i18n.getMessage('ctxMenuReadSelection'),
+    contexts: ['selection'],
+  });
+  chrome.contextMenus.create({
+    id: 'readly-read-page',
+    title: chrome.i18n.getMessage('ctxMenuReadPage'),
+    contexts: ['page'],
+  });
+});
+
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (!tab?.id) return;
+  if (info.menuItemId === 'readly-read-selection' && info.selectionText) {
+    void sendToTab(tab.id, { type: 'READ_SELECTION', payload: { text: info.selectionText } });
+  } else if (info.menuItemId === 'readly-read-page') {
+    void sendToTab(tab.id, { type: 'START_READING' });
+  }
+});
+
 // ── Action click (when no popup is set) ──────────────────────────────────────
 
 chrome.action.onClicked.addListener(async (tab) => {

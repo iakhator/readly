@@ -1,4 +1,5 @@
 import type { ReaderState } from '../shared/types';
+import { OVERLAY_STATUS_LABELS as STATUS_LABELS } from '../shared/strings';
 
 const OVERLAY_ID = 'readly-overlay';
 
@@ -249,12 +250,3 @@ export class ReaderOverlay {
   }
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  idle: 'Ready',
-  loading: 'Loading…',
-  reading: 'Reading',
-  paused: 'Paused',
-  summarizing: 'Summarising…',
-  done: 'Done',
-  error: 'Error',
-};

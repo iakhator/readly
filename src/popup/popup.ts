@@ -1,5 +1,6 @@
 import { sendToBackground } from '../shared/messages';
 import { DEFAULT_SETTINGS, tabStateKey } from '../shared/storage';
+import { STATUS_LABELS } from '../shared/strings';
 import type { ReaderState, ReaderSettings } from '../shared/types';
 
 // ── DOM refs ─────────────────────────────────────────────────────────────────
@@ -327,14 +328,5 @@ function el<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  idle: 'Idle',
-  loading: 'Loading…',
-  reading: 'Reading',
-  paused: 'Paused',
-  summarizing: 'Summarising…',
-  done: 'Done',
-  error: 'Error',
-};
 
 void init();

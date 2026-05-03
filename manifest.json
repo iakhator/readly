@@ -1,6 +1,7 @@
 {
-  "name": "Readly",
-  "description": "Read any webpage aloud with word-by-word highlighting, then summarise it with AI.",
+  "name": "__MSG_extName__",
+  "description": "__MSG_extDescription__",
+  "default_locale": "en",
   "version": "0.1.0",
   "manifest_version": 3,
   "action": {
@@ -31,7 +32,7 @@
       "all_frames": false
     }
   ],
-  "permissions": ["activeTab", "scripting", "storage", "tabs"],
+  "permissions": ["activeTab", "scripting", "storage", "tabs", "contextMenus"],
   "host_permissions": [
     "https://api.anthropic.com/",
     "https://api.openai.com/"

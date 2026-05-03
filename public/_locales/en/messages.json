@@ -1,0 +1,22 @@
+{
+  "extName": {
+    "message": "Readly",
+    "description": "Name of the extension"
+  },
+  "extDescription": {
+    "message": "Read any webpage aloud with word-by-word highlighting, then summarise it with AI.",
+    "description": "Extension description shown in the Chrome Web Store and extension management page"
+  },
+  "cmdToggleReading": {
+    "message": "Toggle Readly reader",
+    "description": "Description of the keyboard shortcut command"
+  },
+  "ctxMenuReadSelection": {
+    "message": "Read selection with Readly",
+    "description": "Context menu item label"
+  },
+  "ctxMenuReadPage": {
+    "message": "Read page with Readly",
+    "description": "Context menu item label for reading the full page"
+  }
+}
