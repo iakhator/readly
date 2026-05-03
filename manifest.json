@@ -1,10 +1,10 @@
 {
-  "name": "readly",
-  "description": "Select text on any page and have it read aloud, with word-by-word highlighting.",
-  "version": "1.0",
+  "name": "Readly",
+  "description": "Read any webpage aloud with word-by-word highlighting, then summarise it with AI.",
+  "version": "0.1.0",
   "manifest_version": 3,
   "action": {
-    "default_popup": "src/popup.html",
+    "default_popup": "src/popup/index.html",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",
@@ -18,26 +18,31 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "content_scripts": [
-    {
-      "js": ["src/scripts/content.ts"],
-      "matches": [
-        "https://developer.chrome.com/docs/extensions/*",
-        "https://developer.chrome.com/docs/webstore/*"
-      ]
-    }
-  ],
   "background": {
-    "service_worker": "src/scripts/background.ts",
+    "service_worker": "src/background/index.ts",
     "type": "module"
   },
-  "permissions": ["activeTab", "scripting"],
+  "content_scripts": [
+    {
+      "js": ["src/content/index.ts"],
+      "css": ["src/reader.css"],
+      "matches": ["<all_urls>"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "permissions": ["activeTab", "scripting", "storage", "tabs"],
+  "host_permissions": [
+    "https://api.anthropic.com/",
+    "https://api.openai.com/"
+  ],
   "commands": {
     "_execute_action": {
       "suggested_key": {
-        "default": "Ctrl+B",
-        "mac": "Command+B"
-      }
+        "default": "Ctrl+Shift+R",
+        "mac": "Command+Shift+R"
+      },
+      "description": "Toggle Readly reader"
     }
   }
 }

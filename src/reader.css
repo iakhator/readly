@@ -1,0 +1,195 @@
+/* ── Readly in-page overlay ────────────────────────────────────────────────── */
+
+#readly-overlay {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2147483647;
+  width: 380px;
+  background: #0f0f1a;
+  color: #e2e8f0;
+  border-radius: 16px;
+  padding: 0;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.07);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  user-select: none;
+  animation: readly-slide-in 0.2s ease;
+}
+
+@keyframes readly-slide-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ── Header ── */
+
+.readly-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.readly-logo {
+  color: #6366f1;
+  font-size: 12px;
+}
+
+.readly-title {
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+.readly-status {
+  flex: 1;
+  font-size: 11px;
+  color: #94a3b8;
+  margin-left: 4px;
+}
+
+.readly-eta {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.readly-btn-close {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.15s ease;
+}
+
+.readly-btn-close:hover { color: #e2e8f0; }
+
+/* ── Progress bar ── */
+
+.readly-progress {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.readly-progress-fill {
+  height: 100%;
+  background: #6366f1;
+  transition: width 0.35s ease;
+  width: 0%;
+}
+
+/* ── Controls ── */
+
+.readly-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+}
+
+.readly-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.07);
+  border: none;
+  border-radius: 50%;
+  color: #e2e8f0;
+  cursor: pointer;
+  width: 34px;
+  height: 34px;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.readly-btn:hover  { background: rgba(255, 255, 255, 0.14); }
+.readly-btn:active { transform: scale(0.9); }
+
+.readly-btn-play,
+.readly-btn-pause {
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+  background: #6366f1;
+}
+
+.readly-btn-play:hover,
+.readly-btn-pause:hover { background: #818cf8; }
+
+/* ── Speed control ── */
+
+.readly-speed-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.readly-speed-label {
+  font-size: 10px;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.readly-speed-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.readly-speed-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #6366f1;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.readly-speed-slider::-webkit-slider-thumb:hover { background: #818cf8; }
+
+.readly-speed-value {
+  font-size: 11px;
+  color: #94a3b8;
+  min-width: 30px;
+  text-align: right;
+}
+
+/* ── Word count ── */
+
+.readly-wordcount {
+  padding: 0 14px 10px;
+  font-size: 11px;
+  color: #475569;
+  text-align: right;
+}
+
+/* ── Word highlight (injected into article text) ── */
+
+.readly-word {
+  display: inline;
+  border-radius: 3px;
+  transition: background 0.1s ease, color 0.1s ease;
+}
+
+.readly-word--active {
+  background: rgba(99, 102, 241, 0.25);
+  color: #818cf8;
+  font-weight: 600;
+  outline: 1px solid rgba(99, 102, 241, 0.4);
+  border-radius: 3px;
+}
