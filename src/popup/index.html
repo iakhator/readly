@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Readly</title>
+    <link rel="stylesheet" href="./popup.css" />
+  </head>
+  <body>
+
+    <!-- Header -->
+    <header class="header">
+      <span class="header-logo" aria-hidden="true">▶</span>
+      <h1 class="header-title">Readly</h1>
+      <button class="header-settings" id="btn-settings" aria-label="Toggle settings" title="Settings">⚙</button>
+    </header>
+
+    <!-- Article info -->
+    <div class="article-info" id="article-info">
+      <div class="empty-state" id="empty-state">
+        <div>Navigate to an article and press <strong>Play</strong></div>
+        <div class="hint">Cmd+Shift+R to start reading</div>
+      </div>
+      <div id="article-details" hidden>
+        <div class="article-title" id="article-title"></div>
+        <div class="article-meta">
+          <span id="article-site"></span>
+          <span id="article-byline"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div class="status-bar" id="status-bar">
+      <div class="status-dot" id="status-dot"></div>
+      <span class="status-label" id="status-label">Idle</span>
+      <span class="status-eta" id="status-eta"></span>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-wrap">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <div class="progress-label">
+      <span id="words-read">0 words</span>
+      <span id="progress-pct">0%</span>
+    </div>
+
+    <!-- Summary error -->
+    <div class="summary-error" id="summary-error" hidden></div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button class="ctrl-btn secondary" id="btn-stop" aria-label="Stop" disabled>⏹</button>
+      <button class="ctrl-btn primary" id="btn-play-pause" aria-label="Play">▶</button>
+      <button class="ctrl-btn secondary" id="btn-skip" aria-label="Skip to summary" title="Skip to summary" disabled>⏭</button>
+    </div>
+
+    <!-- Speed -->
+    <div class="speed-row">
+      <span class="speed-label">Speed</span>
+      <input class="speed-slider" id="speed-slider" type="range" min="0.5" max="2.5" step="0.1" value="1.0" aria-label="Reading speed" />
+      <span class="speed-value" id="speed-value">1.0×</span>
+    </div>
+
+    <!-- Settings panel -->
+    <div class="settings-panel" id="settings-panel">
+
+      <div class="setting-row">
+        <label class="setting-label" for="voice-select">Voice</label>
+        <div class="setting-inline">
+          <select class="setting-select" id="voice-select"></select>
+          <button class="setting-action-btn" id="btn-voice-preview" aria-label="Preview voice" title="Hear this voice">▶</button>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <label class="setting-label" for="pitch-slider">Pitch</label>
+        <div class="setting-slider-group">
+          <input class="speed-slider" id="pitch-slider" type="range" min="0.5" max="2.0" step="0.1" value="1.0" aria-label="Pitch" />
+          <span class="speed-value" id="pitch-value">1.0</span>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <label class="setting-label" for="volume-slider">Volume</label>
+        <div class="setting-slider-group">
+          <input class="speed-slider" id="volume-slider" type="range" min="0" max="1" step="0.05" value="1" aria-label="Volume" />
+          <span class="speed-value" id="volume-value">100%</span>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <label class="setting-label" for="ai-provider">AI Summary</label>
+        <select class="setting-select" id="ai-provider">
+          <option value="none">Off</option>
+          <option value="claude">Claude</option>
+          <option value="openai">OpenAI</option>
+        </select>
+      </div>
+
+      <div class="setting-row" id="api-key-row">
+        <label class="setting-label" for="api-key-input">API Key</label>
+        <div class="setting-inline">
+          <input class="setting-input" id="api-key-input" type="password" placeholder="sk-…" autocomplete="off" />
+          <button class="setting-action-btn" id="btn-test-api" title="Test API key">Test</button>
+        </div>
+      </div>
+      <div class="api-key-status" id="api-key-status" hidden></div>
+
+      <div class="setting-row">
+        <span class="setting-label">Auto-summarise</span>
+        <label class="toggle">
+          <input type="checkbox" id="auto-summarize" checked />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <span class="setting-label">Highlight words</span>
+        <label class="toggle">
+          <input type="checkbox" id="highlight-enabled" checked />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+
+      <button class="reset-btn" id="btn-reset-defaults">Reset to defaults</button>
+
+    </div>
+
+    <script type="module" src="./popup.ts"></script>
+  </body>
+</html>

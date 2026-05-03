@@ -1,4 +1,36 @@
+# Project docs (local only)
+CONTEXT.md
+TASK.md
+DONE.md
+
+# Dependencies
 node_modules/
-node_modules
+
+# Build output
 dist/
 build/
+
+# Vite
+.vite/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
