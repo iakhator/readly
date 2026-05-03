@@ -5,6 +5,7 @@ export interface ExtractedContent {
   excerpt: string | null;
   siteName: string | null;
   wordCount: number;
+  estimatedReadingTime: number;
   lang: string | null;
 }
 
