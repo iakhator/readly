@@ -153,6 +153,17 @@ body {
 .ctrl-btn.primary:hover { background: var(--accent-hover); }
 .ctrl-btn.secondary { width: 34px; height: 34px; font-size: 14px; }
 .ctrl-btn:disabled  { opacity: 0.35; cursor: not-allowed; }
+.ctrl-btn:focus-visible,
+.header-settings:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.setting-select:focus-visible,
+.setting-input:focus-visible,
+.speed-slider:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
 /* ── Speed ── */
 .speed-row {

@@ -8,6 +8,7 @@ const $emptyState    = el('empty-state');
 const $articleDetails = el('article-details');
 const $articleTitle  = el('article-title');
 const $articleSite   = el('article-site');
+const $articleByline = el('article-byline');
 const $statusDot     = el('status-dot');
 const $statusLabel   = el('status-label');
 const $statusEta     = el('status-eta');
@@ -87,6 +88,7 @@ function renderState(state: ReaderState | null): void {
     $wordsRead.textContent = `${state.currentWordIndex} / ${state.totalWords} words`;
     $articleTitle.textContent = state.title ?? '';
     $articleSite.textContent = state.siteName ?? '';
+    $articleByline.textContent = state.byline ?? '';
     $emptyState.hidden = true;
     $articleDetails.hidden = false;
 
@@ -118,6 +120,7 @@ async function loadSettings(): Promise<void> {
 
   $speedSlider.value = String(settings.rate);
   $speedValue.textContent = `${settings.rate.toFixed(1)}×`;
+  if (settings.voice) $voiceSelect.value = settings.voice;
   $aiProvider.value = settings.aiProvider;
   $apiKeyInput.value = settings.aiApiKey;
   $autoSummarize.checked = settings.autoSummarize;
@@ -138,9 +141,16 @@ function populateVoices(): void {
     $voiceSelect.innerHTML = voices
       .map((v) => `<option value="${v.name}">${v.name} (${v.lang})</option>`)
       .join('');
+    // Re-apply saved voice after list is available
+    void sendToBackground({ type: 'CMD_GET_SETTINGS' }).then((res) => {
+      if (res && 'payload' in res) {
+        const saved = (res as { payload: ReaderSettings }).payload.voice;
+        if (saved) $voiceSelect.value = saved;
+      }
+    });
   };
   fill();
-  speechSynthesis.addEventListener('voiceschanged', fill);
+  speechSynthesis.addEventListener('voiceschanged', fill, { once: true });
 }
 
 // ── Event listeners ───────────────────────────────────────────────────────────

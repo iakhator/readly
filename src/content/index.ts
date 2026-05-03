@@ -17,6 +17,7 @@ function onStateChange(state: ReaderState): void {
   const enriched: ReaderState = {
     ...state,
     title: currentContent?.title,
+    byline: currentContent?.byline ?? undefined,
     siteName: currentContent?.siteName ?? undefined,
   };
   overlay?.update(enriched);
