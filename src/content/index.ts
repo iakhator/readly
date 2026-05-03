@@ -108,6 +108,15 @@ chrome.runtime.onMessage.addListener(
         stopReading();
         sendResponse({ ok: true });
         break;
+      case 'SKIP_TO_SUMMARY': {
+        const textToSummarize = currentContent?.textContent ?? null;
+        stopReading();
+        if (textToSummarize) {
+          void sendToBackground({ type: 'SUMMARIZE', payload: { text: textToSummarize } });
+        }
+        sendResponse({ ok: true });
+        break;
+      }
       case 'SUMMARY_READY': {
         const { text, keyPoints } = message.payload;
         const spoken =

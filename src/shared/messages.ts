@@ -6,6 +6,7 @@ export type Message =
   | { type: 'CMD_PAUSE' }
   | { type: 'CMD_RESUME' }
   | { type: 'CMD_STOP' }
+  | { type: 'CMD_SKIP' }
   | { type: 'CMD_GET_STATE' }
   | { type: 'CMD_GET_SETTINGS' }
   | { type: 'CMD_UPDATE_SETTINGS'; payload: Partial<ReaderSettings> }
@@ -17,6 +18,7 @@ export type Message =
   | { type: 'PAUSE_READING' }
   | { type: 'RESUME_READING' }
   | { type: 'STOP_READING' }
+  | { type: 'SKIP_TO_SUMMARY' }
   | { type: 'SUMMARY_READY'; payload: Summary }
   // Background → Popup (responses)
   | { type: 'SETTINGS_RESPONSE'; payload: ReaderSettings }

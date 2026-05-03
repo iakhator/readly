@@ -170,7 +170,7 @@ $btnStop.addEventListener('click', () => {
 });
 
 $btnSkip.addEventListener('click', () => {
-  void sendToBackground({ type: 'CMD_STOP' });
+  void sendToBackground({ type: 'CMD_SKIP' });
 });
 
 $btnSettings.addEventListener('click', () => {

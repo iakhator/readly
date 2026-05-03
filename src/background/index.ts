@@ -1,4 +1,4 @@
-import { getSettings, saveSettings, setTabState, clearTabState, tabStateKey } from '../shared/storage';
+import { getSettings, saveSettings, getTabState, setTabState, clearTabState, tabStateKey } from '../shared/storage';
 import { summarize } from '../lib/summarizer';
 import { sendToTab } from '../shared/messages';
 import type { Message } from '../shared/messages';
@@ -34,6 +34,11 @@ chrome.runtime.onMessage.addListener(
 
       case 'CMD_STOP':
         void getActiveTabId().then((id) => { if (id) void sendToTab(id, { type: 'STOP_READING' }); });
+        sendResponse({ ok: true });
+        break;
+
+      case 'CMD_SKIP':
+        void getActiveTabId().then((id) => { if (id) void sendToTab(id, { type: 'SKIP_TO_SUMMARY' }); });
         sendResponse({ ok: true });
         break;
 
@@ -101,7 +106,11 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 // ── Action click (when no popup is set) ──────────────────────────────────────
 
 chrome.action.onClicked.addListener(async (tab) => {
-  if (tab.id !== undefined) {
+  if (tab.id === undefined) return;
+  const state = await getTabState(tab.id);
+  if (state?.status === 'reading' || state?.status === 'paused') {
+    await sendToTab(tab.id, { type: 'STOP_READING' });
+  } else {
     await sendToTab(tab.id, { type: 'START_READING' });
   }
 });
