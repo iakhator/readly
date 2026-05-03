@@ -1,5 +1,5 @@
 import { getSettings, saveSettings, getTabState, setTabState, clearTabState, tabStateKey } from '../shared/storage';
-import { summarize } from '../lib/summarizer';
+import { summarize, friendlySummarizeError } from '../lib/summarizer';
 import { sendToTab } from '../shared/messages';
 import type { Message } from '../shared/messages';
 
@@ -84,6 +84,15 @@ chrome.runtime.onMessage.addListener(
             }
           } catch (err) {
             console.error('[Readly] Summarisation failed:', err);
+            if (tabId !== undefined) {
+              const current = await getTabState(tabId);
+              if (current) {
+                await setTabState(tabId, {
+                  ...current,
+                  summaryError: friendlySummarizeError(err),
+                });
+              }
+            }
           }
           sendResponse({ ok: true });
         })();

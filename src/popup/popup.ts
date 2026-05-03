@@ -28,6 +28,7 @@ const $apiKeyInput   = el<HTMLInputElement>('api-key-input');
 const $apiKeyRow     = el('api-key-row');
 const $autoSummarize = el<HTMLInputElement>('auto-summarize');
 const $highlightEnabled = el<HTMLInputElement>('highlight-enabled');
+const $summaryError     = el('summary-error');
 
 let currentState: ReaderState | null = null;
 let currentTabId: number | undefined;
@@ -92,6 +93,13 @@ function renderState(state: ReaderState | null): void {
     $emptyState.hidden = true;
     $articleDetails.hidden = false;
 
+    if (state.summaryError) {
+      $summaryError.textContent = `⚠ ${state.summaryError}`;
+      $summaryError.hidden = false;
+    } else {
+      $summaryError.hidden = true;
+    }
+
     if (state.estimatedTimeRemaining > 0) {
       const m = Math.floor(state.estimatedTimeRemaining / 60);
       const s = state.estimatedTimeRemaining % 60;
@@ -104,6 +112,7 @@ function renderState(state: ReaderState | null): void {
     $progressPct.textContent = '0%';
     $wordsRead.textContent = '0 words';
     $statusEta.textContent = '';
+    $summaryError.hidden = true;
     $emptyState.hidden = false;
     $articleDetails.hidden = true;
   }

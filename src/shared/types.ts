@@ -29,6 +29,7 @@ export interface ReaderState {
   byline?: string;
   siteName?: string;
   tabId?: number;
+  summaryError?: string;
 }
 
 export type AIProvider = 'none' | 'claude' | 'openai';
