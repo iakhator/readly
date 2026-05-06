@@ -230,6 +230,12 @@
   cursor: pointer !important;
   flex-shrink: 0 !important;
   box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-shadow: none !important;
+  filter: none !important;
+  line-height: 1 !important;
+  outline: none !important;
   transition: background 150ms ease, transform 150ms ease;
 }
 
