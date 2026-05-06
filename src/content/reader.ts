@@ -1,4 +1,5 @@
 import type { ReaderSettings, ReaderState, ReadingStatus } from '../shared/types';
+import { selectBestVoice } from '../shared/voices';
 
 /** Max words per TTS utterance — keeps Chrome's 15-second stall bug at bay */
 const CHUNK_WORD_LIMIT = 150;
@@ -294,10 +295,13 @@ async function applyVoice(
   settings: ReaderSettings,
 ): Promise<void> {
   const voices = await getVoices();
-  const voice = voices.find((v) => v.name === settings.voice) ?? null;
-  if (voice) utterance.voice = voice;
+  const voice = selectBestVoice(voices, settings.voice);
+  if (voice) {
+    utterance.voice = voice;
+    utterance.lang = voice.lang;
+  }
   utterance.rate = settings.rate;
   utterance.pitch = settings.pitch;
   utterance.volume = settings.volume;
-  if (voice) utterance.lang = voice.lang;
 }
+

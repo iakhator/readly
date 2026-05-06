@@ -1,6 +1,7 @@
 import { sendToBackground } from '../shared/messages';
 import { DEFAULT_SETTINGS, tabStateKey } from '../shared/storage';
 import { STATUS_LABELS } from '../shared/strings';
+import { selectBestVoice, sortVoices } from '../shared/voices';
 import type { ReaderState, ReaderSettings } from '../shared/types';
 
 // ── DOM refs ─────────────────────────────────────────────────────────────────
@@ -162,12 +163,19 @@ function patchSettings(patch: Partial<ReaderSettings>): void {
 
 function populateVoices(): void {
   const fill = () => {
-    const voices = speechSynthesis.getVoices();
-    if (!voices.length) return;
-    $voiceSelect.innerHTML = voices
-      .map((v) => `<option value="${v.name}">${v.name} (${v.lang})</option>`)
-      .join('');
-    if (currentSettings.voice) $voiceSelect.value = currentSettings.voice;
+    const raw = speechSynthesis.getVoices();
+    if (!raw.length) return;
+    const sorted = sortVoices(raw);
+    const autoLabel = selectBestVoice(sorted, '')?.name ?? 'system default';
+    $voiceSelect.innerHTML =
+      `<option value="">Auto — ${autoLabel}</option>` +
+      sorted
+        .map((v) => {
+          const quality = v.localService ? ' ★' : '';
+          return `<option value="${v.name}">${v.name}${quality} (${v.lang})</option>`;
+        })
+        .join('');
+    $voiceSelect.value = currentSettings.voice ?? '';
   };
   fill();
   speechSynthesis.addEventListener('voiceschanged', fill, { once: true });
@@ -183,7 +191,7 @@ function speakPreview(immediate = false): void {
     speechSynthesis.cancel();
     const utt = new SpeechSynthesisUtterance('The quick brown fox jumps over the lazy dog.');
     const voices = speechSynthesis.getVoices();
-    const v = voices.find((v) => v.name === currentSettings.voice) ?? null;
+    const v = selectBestVoice(voices, currentSettings.voice);
     if (v) { utt.voice = v; utt.lang = v.lang; }
     utt.rate   = currentSettings.rate;
     utt.pitch  = currentSettings.pitch;
