@@ -2,19 +2,26 @@ import { extractContent } from './extractor';
 import { TTSReader } from './reader';
 import { WordHighlighter } from './highlighter';
 import { ReaderOverlay } from './overlay';
+import { ReadlyFAB } from './fab';
 import { getSettings, saveSettings } from '../shared/storage';
 import { sendToBackground } from '../shared/messages';
 import type { ExtractedContent, ReaderState } from '../shared/types';
 import type { Message } from '../shared/messages';
 
-// ── Graceful degradation ──────────────────────────────────────────────────────
+// ── FAB — always-present page button ─────────────────────────────────────────
 
-if (typeof speechSynthesis === 'undefined') {
-  console.warn('[Readly] Web Speech API not available — extension disabled on this page.');
-  // Stop executing — no message listener registered
-  // eslint-disable-next-line no-throw-literal
-  throw new Error('[Readly] speechSynthesis unavailable');
-}
+const fab = new ReadlyFAB(() => {
+  const status = fab.getStatus();
+  if (status === 'reading') {
+    reader?.pause();
+  } else if (status === 'paused') {
+    reader?.play();
+  } else {
+    void startReading();
+  }
+});
+
+fab.mount();
 
 // ── State ─────────────────────────────────────────────────────────────────────
 
@@ -26,6 +33,8 @@ let currentContent: ExtractedContent | null = null;
 // ── Callbacks ─────────────────────────────────────────────────────────────────
 
 function onStateChange(state: ReaderState): void {
+  fab.update(state.status);
+
   const enriched: ReaderState = {
     ...state,
     title: currentContent?.title,
@@ -47,17 +56,39 @@ function onWordChange(index: number): void {
 // ── Reading lifecycle ─────────────────────────────────────────────────────────
 
 async function startReading(): Promise<void> {
-  currentContent = extractContent();
-  if (!currentContent) {
-    console.warn('[Readly] Could not extract readable content from this page.');
+  if (typeof speechSynthesis === 'undefined') {
+    console.warn('[Readly] Web Speech API not available on this page.');
     return;
   }
+
+  // Stop first, THEN extract so stopReading() doesn't wipe freshly-set content
+  stopReading();
+  currentContent = extractContent();
+
+  if (!currentContent) {
+    console.warn('[Readly] Could not extract readable content from this page.');
+    void sendToBackground({
+      type: 'READER_STATE_UPDATE',
+      payload: {
+        status: 'error',
+        progress: 0,
+        currentWordIndex: 0,
+        totalWords: 0,
+        wordsPerMinute: 0,
+        estimatedTimeRemaining: 0,
+        summaryError: 'Could not find readable content on this page.',
+      },
+    });
+    return;
+  }
+
   await beginReading(currentContent.textContent);
 }
 
 async function startReadingSelection(text: string): Promise<void> {
+  if (typeof speechSynthesis === 'undefined') return;
+
   stopReading();
-  // Synthesise minimal content metadata for the overlay
   currentContent = {
     title: document.title,
     byline: null,
@@ -71,18 +102,20 @@ async function startReadingSelection(text: string): Promise<void> {
   await beginReading(text);
 }
 
+/**
+ * Mounts the overlay + reader for the given text.
+ * Callers MUST call stopReading() and set currentContent before invoking.
+ */
 async function beginReading(text: string): Promise<void> {
-  stopReading();
-
   const settings = await getSettings();
 
-  reader = new TTSReader(settings, onStateChange, onWordChange);
+  reader    = new TTSReader(settings, onStateChange, onWordChange);
   highlighter = new WordHighlighter();
 
   overlay = new ReaderOverlay({
-    onPlay: () => reader?.play(),
+    onPlay:  () => reader?.play(),
     onPause: () => reader?.pause(),
-    onStop: stopReading,
+    onStop:  stopReading,
     onSpeedChange: (rate) => {
       reader?.updateSettings({ rate });
       void saveSettings({ rate });
@@ -92,26 +125,36 @@ async function beginReading(text: string): Promise<void> {
 
   overlay.mount();
 
+  // Use the highlighter's word list as TTS source so indices stay aligned.
+  // The highlighter wraps the raw DOM; its span order matches charIndex math.
+  let textToRead = text;
   if (settings.highlightEnabled && currentContent) {
     const articleEl =
       document.querySelector<HTMLElement>('article') ??
       document.querySelector<HTMLElement>('main') ??
       document.querySelector<HTMLElement>('[role="main"]');
-    if (articleEl) highlighter.wrap(articleEl);
+    if (articleEl) {
+      const wrappedText = highlighter.wrap(articleEl);
+      if (wrappedText.trim()) textToRead = wrappedText;
+    }
   }
 
-  reader.load(text);
+  reader.load(textToRead);
   reader.play();
 }
 
 function stopReading(): void {
   reader?.stop();
+  // Always cancel even when no reader exists — clears any paused/stale state
+  // so the next speechSynthesis.speak() starts from a clean slate.
+  speechSynthesis.cancel();
   highlighter?.destroy();
   overlay?.unmount();
-  reader = null;
+  reader      = null;
   highlighter = null;
-  overlay = null;
+  overlay     = null;
   currentContent = null;
+  fab.update('idle');
 }
 
 async function handleReadingComplete(): Promise<void> {
@@ -135,7 +178,6 @@ function handleNavigation(): void {
 window.addEventListener('popstate', handleNavigation);
 window.addEventListener('hashchange', handleNavigation);
 
-// Intercept History API pushes (React Router, Vue Router, etc.)
 const _pushState = history.pushState.bind(history);
 history.pushState = function (...args: Parameters<typeof history.pushState>) {
   _pushState(...args);

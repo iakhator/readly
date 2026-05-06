@@ -253,6 +253,7 @@ function showApiStatus(text: string, ok: boolean): void {
 // ── Event listeners ───────────────────────────────────────────────────────────
 
 $btnPlayPause.addEventListener('click', () => {
+  console.log('Play/pause clicked. Current status:', currentState?.status);
   if (isPlaying) {
     void sendToBackground({ type: 'CMD_PAUSE' });
   } else if (currentState?.status === 'paused') {

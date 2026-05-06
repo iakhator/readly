@@ -128,6 +128,7 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
+  console.log(tab, info, 'infotab')
   if (!tab?.id) return;
   if (info.menuItemId === 'readly-read-selection' && info.selectionText) {
     void sendToTab(tab.id, { type: 'READ_SELECTION', payload: { text: info.selectionText } });

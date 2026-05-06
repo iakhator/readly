@@ -133,6 +133,16 @@ export class TTSReader {
       // 'interrupted' / 'canceled' fire when we call speechSynthesis.cancel()
       // intentionally (stop, speed change, watchdog restart) — safe to ignore.
       if (event.error === 'interrupted' || event.error === 'canceled') return;
+      // 'not-allowed' means the browser blocked audio before a page gesture.
+      // The FAB click normally unlocks this; if it still fires, the user
+      // started reading via the popup on a page they hadn't interacted with.
+      if (event.error === 'not-allowed') {
+        console.warn('[Readly] Audio blocked — click the ▶ button on the page to start reading.');
+        this.stopWatchdog();
+        this.status = 'error';
+        this.emitState('error', 'Audio blocked. Click the ▶ button directly on the page to start.');
+        return;
+      }
       console.error('[Readly] TTS error:', event.error);
       this.stopWatchdog();
       this.status = 'error';
@@ -203,7 +213,7 @@ export class TTSReader {
     this.hadBoundaryEvent = false;
   }
 
-  private emitState(status: ReadingStatus): void {
+  private emitState(status: ReadingStatus, errorMessage?: string): void {
     const total = this.words.length;
     const current = this.absoluteWordIdx;
     const wpm = Math.round(this.settings.rate * 150);
@@ -215,6 +225,7 @@ export class TTSReader {
       wordsPerMinute: wpm,
       estimatedTimeRemaining:
         wpm > 0 ? Math.max(0, Math.round(((total - current) / wpm) * 60)) : 0,
+      ...(errorMessage ? { summaryError: errorMessage } : {}),
     });
   }
 }
