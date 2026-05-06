@@ -165,20 +165,23 @@
   white-space: nowrap;
 }
 
-.readly-btn-close {
-  background: none;
-  border: none;
-  color: #64748b;
-  cursor: pointer;
-  font-size: 13px;
-  padding: 2px 4px;
-  border-radius: 4px;
-  line-height: 1;
+#readly-overlay .readly-btn-close {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #475569 !important;
+  font-size: 13px !important;
+  padding: 2px 4px !important;
+  border-radius: 4px !important;
+  line-height: 1 !important;
+  width: auto !important;
+  height: auto !important;
   transition: color 0.15s ease;
-  flex-shrink: 0;
 }
 
-.readly-btn-close:hover { color: #e2e8f0; }
+#readly-overlay .readly-btn-close:hover { color: #94a3b8 !important; }
 
 /* ── Progress bar ── */
 
@@ -213,40 +216,43 @@
   padding: 10px 14px;
 }
 
-.readly-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.07);
-  border: none;
-  border-radius: 50%;
-  color: #e2e8f0;
-  cursor: pointer;
-  width: 34px;
-  height: 34px;
-  font-size: 14px;
-  flex-shrink: 0;
-  transition: background 0.15s ease, transform 0.1s ease;
+/* Base — scoped under #readly-overlay to beat page CSS */
+#readly-overlay .readly-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  background: #22223b !important;
+  border: none !important;
+  border-radius: 50% !important;
+  color: #e2e8f0 !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  box-shadow: none !important;
+  transition: background 150ms ease, transform 150ms ease;
 }
 
-.readly-btn:hover  { background: rgba(255, 255, 255, 0.14); }
-.readly-btn:active { transform: scale(0.9); }
+#readly-overlay .readly-btn:hover  { background: #1a1a2e !important; }
+#readly-overlay .readly-btn:active { transform: scale(0.93) !important; }
 
-.readly-btn:focus-visible {
-  outline: 2px solid #6366f1;
-  outline-offset: 2px;
+#readly-overlay .readly-btn:focus-visible {
+  outline: 2px solid #6366f1 !important;
+  outline-offset: 2px !important;
 }
 
-.readly-btn-play,
-.readly-btn-pause {
-  width: 40px;
-  height: 40px;
-  font-size: 16px;
-  background: #6366f1;
+/* Both buttons: always purple */
+#readly-overlay .readly-btn-toggle,
+#readly-overlay .readly-btn-stop {
+  background: #6366f1 !important;
 }
 
-.readly-btn-play:hover,
-.readly-btn-pause:hover { background: #818cf8; }
+#readly-overlay .readly-btn-toggle:hover,
+#readly-overlay .readly-btn-stop:hover { background: #818cf8 !important; }
+
+/* Size variants */
+#readly-overlay .readly-btn-toggle { width: 44px !important; height: 44px !important; font-size: 18px !important; }
+#readly-overlay .readly-btn-stop   { width: 34px !important; height: 34px !important; font-size: 14px !important; }
 
 /* ── Speed control ── */
 

@@ -35,7 +35,7 @@ export class ReaderOverlay {
     document.body.appendChild(this.el);
     this.bindEvents();
     // Focus the play button so keyboard nav works immediately
-    this.el.querySelector<HTMLButtonElement>('.readly-btn-play')?.focus();
+    this.el.querySelector<HTMLButtonElement>('.readly-btn-toggle')?.focus();
   }
 
   unmount(): void {
@@ -53,8 +53,7 @@ export class ReaderOverlay {
     if (!this.el) return;
 
     const el = this.el;
-    const playBtn = el.querySelector<HTMLButtonElement>('.readly-btn-play');
-    const pauseBtn = el.querySelector<HTMLButtonElement>('.readly-btn-pause');
+    const toggleBtn = el.querySelector<HTMLButtonElement>('.readly-btn-toggle');
     const progressBar = el.querySelector<HTMLElement>('.readly-progress');
     const progressFill = el.querySelector<HTMLElement>('.readly-progress-fill');
     const progressPct = el.querySelector<HTMLElement>('.readly-progress-pct');
@@ -65,13 +64,12 @@ export class ReaderOverlay {
 
     const isReading = state.status === 'reading';
     this.isPlaying = isReading;
-    const isPausedOrIdle = state.status === 'paused' || state.status === 'idle';
 
-    if (playBtn) {
-      playBtn.hidden = !isPausedOrIdle;
-      playBtn.setAttribute('aria-label', state.status === 'paused' ? 'Resume' : 'Play');
+    if (toggleBtn) {
+      toggleBtn.textContent = isReading ? '⏸' : '▶';
+      toggleBtn.setAttribute('aria-label', isReading ? 'Pause' : state.status === 'paused' ? 'Resume' : 'Play');
+      toggleBtn.dataset.playing = isReading ? 'true' : 'false';
     }
-    if (pauseBtn) pauseBtn.hidden = !isReading;
 
     if (progressBar) progressBar.setAttribute('aria-valuenow', String(state.progress));
     if (progressFill) progressFill.style.width = `${state.progress}%`;
@@ -116,8 +114,7 @@ export class ReaderOverlay {
         <span class="readly-progress-pct" aria-hidden="true">0%</span>
       </div>
       <div class="readly-controls">
-        <button class="readly-btn readly-btn-play" aria-label="Play">▶</button>
-        <button class="readly-btn readly-btn-pause" aria-label="Pause" hidden>⏸</button>
+        <button class="readly-btn readly-btn-toggle" aria-label="Play" data-playing="false">▶</button>
         <button class="readly-btn readly-btn-stop" aria-label="Stop">⏹</button>
         <div class="readly-speed-control">
           <span class="readly-speed-label" aria-hidden="true">0.5×</span>
@@ -142,8 +139,10 @@ export class ReaderOverlay {
     if (!this.el) return;
     const el = this.el;
 
-    el.querySelector('.readly-btn-play')?.addEventListener('click', this.callbacks.onPlay);
-    el.querySelector('.readly-btn-pause')?.addEventListener('click', this.callbacks.onPause);
+    el.querySelector('.readly-btn-toggle')?.addEventListener('click', () => {
+      if (this.isPlaying) this.callbacks.onPause();
+      else this.callbacks.onPlay();
+    });
     el.querySelector('.readly-btn-stop')?.addEventListener('click', this.callbacks.onStop);
     el.querySelector('.readly-btn-close')?.addEventListener('click', this.callbacks.onClose);
 
@@ -249,4 +248,3 @@ export class ReaderOverlay {
     }
   }
 }
-
