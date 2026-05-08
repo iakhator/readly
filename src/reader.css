@@ -1,0 +1,358 @@
+/* ── Floating action button ─────────────────────────────────────────────────── */
+
+#readly-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  z-index: 2147483646;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.45), 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  animation: readly-fab-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes readly-fab-in {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+#readly-fab:hover {
+  background: #818cf8;
+  box-shadow: 0 6px 24px rgba(99, 102, 241, 0.6), 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+#readly-fab:active { transform: scale(0.91); }
+
+#readly-fab:focus-visible {
+  outline: 3px solid #818cf8;
+  outline-offset: 3px;
+}
+
+#readly-fab[data-status="reading"] {
+  background: #22c55e;
+  box-shadow: 0 4px 20px rgba(34, 197, 94, 0.5), 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+#readly-fab[data-status="reading"]:hover { background: #4ade80; }
+
+#readly-fab[data-status="paused"] {
+  background: #f59e0b;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.5), 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+#readly-fab[data-status="paused"]:hover { background: #fbbf24; }
+
+#readly-fab[data-status="error"] { background: #ef4444; }
+
+/* ── Readly in-page overlay ────────────────────────────────────────────────── */
+
+#readly-overlay {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2147483647;
+  width: 380px;
+  background: #0f0f1a;
+  color: #e2e8f0;
+  border-radius: 16px;
+  padding: 0;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.07);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  user-select: none;
+  animation: readly-slide-in 0.2s ease;
+  outline: none;
+}
+
+/* Slide-in from bottom (default, centered position) */
+@keyframes readly-slide-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Slide-out — used when overlay hasn't been dragged */
+#readly-overlay.readly-overlay--hiding {
+  animation: readly-slide-out 0.2s ease forwards;
+}
+
+@keyframes readly-slide-out {
+  from { opacity: 1; transform: translateX(-50%) translateY(0); }
+  to   { opacity: 0; transform: translateX(-50%) translateY(12px); }
+}
+
+/* Fade-out — used after drag repositioning (no translateX centering) */
+#readly-overlay.readly-overlay--hiding-dragged {
+  animation: readly-fade-out 0.2s ease forwards;
+}
+
+@keyframes readly-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; transform: translateY(8px); }
+}
+
+/* ── Header ── */
+
+.readly-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  cursor: grab;
+}
+
+.readly-header:active {
+  cursor: grabbing;
+}
+
+.readly-drag-handle {
+  color: #334155;
+  font-size: 15px;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.readly-logo {
+  color: #6366f1;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.readly-title-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+.readly-brand {
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.readly-article-title {
+  font-size: 10px;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  line-height: 1.2;
+}
+
+.readly-status {
+  flex: 1;
+  font-size: 11px;
+  color: #94a3b8;
+  margin-left: 4px;
+}
+
+.readly-eta {
+  font-size: 11px;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+#readly-overlay .readly-btn-close {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #475569 !important;
+  font-size: 13px !important;
+  padding: 2px 4px !important;
+  border-radius: 4px !important;
+  line-height: 1 !important;
+  width: auto !important;
+  height: auto !important;
+  transition: color 0.15s ease;
+}
+
+#readly-overlay .readly-btn-close:hover { color: #94a3b8 !important; }
+
+/* ── Progress bar ── */
+
+.readly-progress {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: visible;
+}
+
+.readly-progress-fill {
+  height: 100%;
+  background: #6366f1;
+  transition: width 0.35s ease;
+  width: 0%;
+}
+
+.readly-progress-pct {
+  position: absolute;
+  right: 14px;
+  top: 5px;
+  font-size: 10px;
+  color: #475569;
+}
+
+/* ── Controls ── */
+
+.readly-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+}
+
+/* Base — scoped under #readly-overlay to beat page CSS */
+#readly-overlay .readly-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  background: #22223b !important;
+  border: none !important;
+  border-radius: 50% !important;
+  color: #e2e8f0 !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-shadow: none !important;
+  filter: none !important;
+  line-height: 1 !important;
+  outline: none !important;
+  transition: background 150ms ease, transform 150ms ease;
+}
+
+#readly-overlay .readly-btn:hover  { background: #1a1a2e !important; }
+#readly-overlay .readly-btn:active { transform: scale(0.93) !important; }
+
+#readly-overlay .readly-btn:focus-visible {
+  outline: 2px solid #6366f1 !important;
+  outline-offset: 2px !important;
+}
+
+/* Both buttons: always purple */
+#readly-overlay .readly-btn-toggle,
+#readly-overlay .readly-btn-stop {
+  background: #6366f1 !important;
+}
+
+#readly-overlay .readly-btn-toggle:hover,
+#readly-overlay .readly-btn-stop:hover { background: #818cf8 !important; }
+
+/* Size variants */
+#readly-overlay .readly-btn-toggle { width: 44px !important; height: 44px !important; font-size: 18px !important; }
+#readly-overlay .readly-btn-stop   { width: 34px !important; height: 34px !important; font-size: 14px !important; }
+
+/* ── Speed control ── */
+
+.readly-speed-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.readly-speed-label {
+  font-size: 10px;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.readly-speed-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.readly-speed-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #6366f1;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.readly-speed-slider::-webkit-slider-thumb:hover { background: #818cf8; }
+
+.readly-speed-slider:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.readly-speed-value {
+  font-size: 11px;
+  color: #94a3b8;
+  min-width: 30px;
+  text-align: right;
+}
+
+/* ── Word count ── */
+
+.readly-wordcount {
+  padding: 0 14px 10px;
+  font-size: 11px;
+  color: #475569;
+  text-align: right;
+  min-height: 18px;
+}
+
+/* ── Word highlight (injected into article text) ── */
+
+.readly-word {
+  display: inline;
+  border-radius: 3px;
+  transition: background 0.1s ease, color 0.1s ease;
+}
+
+.readly-word--active {
+  background: rgba(99, 102, 241, 0.25);
+  color: #818cf8;
+  font-weight: 600;
+  outline: 1px solid rgba(99, 102, 241, 0.4);
+  border-radius: 3px;
+}
+
+.readly-word.readly-pause {
+  display: none;
+}
+
+/* ── Reduced motion ── */
+
+@media (prefers-reduced-motion: reduce) {
+  #readly-overlay,
+  #readly-overlay.readly-overlay--hiding,
+  #readly-overlay.readly-overlay--hiding-dragged {
+    animation: none;
+  }
+
+  .readly-progress-fill,
+  .readly-btn,
+  .readly-word {
+    transition: none;
+  }
+}
